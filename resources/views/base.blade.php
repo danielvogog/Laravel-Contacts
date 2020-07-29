@@ -10,8 +10,8 @@
     <body>
         @include('navigation')
         <div class="container-fluid mt-3">
-            @include('errors');
-            @include('sessions');
+            @include('errors')
+            @include('sessions')
             @yield('content')
         </div>
         @include('footer')
