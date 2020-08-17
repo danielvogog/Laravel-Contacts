@@ -40,10 +40,10 @@ php artisan serve
 
 ## Backgrounds 
 
-(readme/001.png)
+![001](readme/001.png)
 
-(readme/002.png)
+![002](readme/002.png)
 
-(readme/003.png)
+![003](readme/003.png)
 
-(readme/004.png)
+![004](readme/004.png)
