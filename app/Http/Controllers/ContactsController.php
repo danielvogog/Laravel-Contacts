@@ -25,7 +25,15 @@ class ContactsController extends Controller
      */
     public function create()
     {
-        return view('contacts.create');
+        $form_array = array(
+            'action' => 'ContactsController@store',
+            'method' => 'POST',
+            'label' => 'Create'
+        );
+
+        return view('contacts.form', [
+            'form_array' => $form_array
+        ]);
     }
 
     /**
@@ -68,10 +76,18 @@ class ContactsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        $contact = Contact::findOrFail($id);
-        return view('contacts.edit', ['contact' => $contact]);
+    public function edit($id) {   
+        $contact = Contact::findOrFail($id);   
+        $form_array = array(
+            'action' => 'ContactsController@update',
+            'method' => 'PUT',
+            'label' => 'Update'
+        );     
+        
+        return view('contacts.form', [
+            'contact' => $contact,
+            'form_array' => $form_array
+        ]);
     }
 
     /**
