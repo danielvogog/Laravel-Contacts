@@ -20,3 +20,5 @@ Route::get('/destroy/{id}', 'ContactsController@confirmDestroy');
 Route::delete('/destroy/{id}', 'ContactsController@destroy');
 Route::get('/edit/{id}', 'ContactsController@edit');
 Route::put('/edit/{id}', 'ContactsController@update');
+Route::get('/settings', 'ContactsController@settings_show');
+Route::post('/settings', 'ContactsController@settings_store');

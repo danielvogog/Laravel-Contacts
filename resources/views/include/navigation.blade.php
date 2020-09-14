@@ -9,6 +9,7 @@
         <div class="navbar-nav">
             <a href="/" class="nav-item  nav-link {{ Request::is('/') ? 'active' : '' }}">Home</a>
             <a href="/create" class="nav-item  nav-link {{ Request::is('create') ? 'active' : '' }}">Create</a>
+            <a href="/settings" class="nav-item  nav-link {{ Request::is('settings') ? 'active' : '' }}">Settings</a>
         </div>
     </div>    
 </nav>

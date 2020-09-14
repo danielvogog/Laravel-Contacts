@@ -1,6 +1,10 @@
 @extends('base')
 
 @section('content')
+<div class="text-right">
+    <a href="{{ url('/') }}"><button class="btn btn-success">Back</button></a>
+</div>
+
 <div class="row">
     <div class="col-sm-0 col-xl-4"></div>
 

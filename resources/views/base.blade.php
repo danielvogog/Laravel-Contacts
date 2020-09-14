@@ -8,13 +8,15 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('/css/app.css') }}">
     </head>
     <body>
-        @include('navigation')
+        @include('include.navigation')
         <div class="container-fluid mt-3">
             @include('session.errors')
             @include('session.status')
             @yield('content')
         </div>
-        @include('footer')
+        @include('include.footer')
+        <!-- SweetAlert2 -->
+        @include('sweetalert::alert')
         <!-- Scripts -->
         <script src="{{ asset('/js/app.js') }}"></script>
     </body>
