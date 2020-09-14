@@ -22,8 +22,8 @@
             <td>{{ $contact->number }}</td>
             <td>{{ $contact->created_at }}</td>
             <td>{{ $contact->updated_at }}</td>
-            <td><button class="btn btn-dark"><a href="/edit/{{ $contact->id }}" class="text-decoration-none text-light">Edit</a></button></td>
-            <td><button class="btn btn-dark"><a href="/destroy/{{ $contact->id }}" class="text-decoration-none text-light">Delete</a></button></td>
+            <td><a href="/edit/{{ $contact->id }}" class="text-decoration-none text-light"><button class="btn btn-dark">Edit</button></a></td>
+            <td><a href="/destroy/{{ $contact->id }}" class="text-decoration-none text-light"><button class="btn btn-dark">Delete</button></a></td>
         </tr>
         @endforeach
         </tbody>

@@ -4,18 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Contact;
+use RealRashid\SweetAlert\Facades\Alert;
 
-class ContactsController extends Controller
-{
+class ContactsController extends Controller {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $contacts = Contact::orderBy('updated_at', 'desc')->paginate(5);
-        return view('contacts.index', ['contacts' => $contacts]);
+    public function index() {
+        $contacts = Contact::orderBy('id', 'DESC')->paginate(5);
+        return view('contacts.index', compact('contacts'));
     }
 
     /**
@@ -23,17 +22,13 @@ class ContactsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         $form_array = array(
             'action' => 'ContactsController@store',
             'method' => 'POST',
             'label' => 'Create'
         );
-
-        return view('contacts.form', [
-            'form_array' => $form_array
-        ]);
+        return view('contacts.form', compact('form_array'));
     }
 
     /**
@@ -42,21 +37,25 @@ class ContactsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
-            'first_name' => 'required|min:3|max:25',
-            'last_name' => 'required|min:3|max:25',
-            'number' => 'required|min:3|max:25',
+            'first_name' => 'required|min:3|max:30',
+            'last_name' => 'required|min:3|max:30',
+            'number' => 'required|min:3|max:30',
         ]);
 
-        $contact = new Contact();
-        $contact->first_name = $request->input('first_name');
-        $contact->last_name = $request->input('last_name');
-        $contact->number = $request->input('number');
-        $contact->save();
-
-        return redirect('/')->with('status', 'Contact created successfully!');
+        $new_contact = new Contact();
+        $new_contact->first_name = strval($request->input('first_name'));
+        $new_contact->last_name = strval($request->input('last_name'));
+        $new_contact->number = intval($request->input('number'));
+        $new_contact->save();
+        
+        $notifications_type = $this->_get_notifications_type();
+        if($notifications_type === 'sweetalert2') {
+            Alert::success('Contact created successfully!');
+            return redirect()->action('ContactsController@index');
+        }
+        return redirect()->action('ContactsController@index')->with('status', 'Contact created successfully!');
     }
 
     /**
@@ -65,8 +64,7 @@ class ContactsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         
     }
 
@@ -77,17 +75,17 @@ class ContactsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id) {   
-        $contact = Contact::findOrFail($id);   
+        $contact = Contact::findOrFail(intval($id));   
         $form_array = array(
             'action' => 'ContactsController@update',
             'method' => 'PUT',
             'label' => 'Update'
         );     
         
-        return view('contacts.form', [
-            'contact' => $contact,
-            'form_array' => $form_array
-        ]);
+        return view('contacts.form', compact(
+            'contact', 
+            'form_array'
+        ));
     }
 
     /**
@@ -97,21 +95,25 @@ class ContactsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id) {
         $request->validate([
-            'first_name' => 'required|min:3|max:25',
-            'last_name' => 'required|min:3|max:25',
-            'number' => 'required|min:3|max:25',
+            'first_name' => 'required|min:3|max:30',
+            'last_name' => 'required|min:3|max:30',
+            'number' => 'required|min:3|max:30',
         ]);
 
-        $contact = Contact::findOrFail($id);
-        $contact->first_name = $request->input('first_name');
-        $contact->last_name = $request->input('last_name');
-        $contact->number = $request->input('number');
+        $contact = Contact::findOrFail(intval($id));
+        $contact->first_name = strval($request->input('first_name'));
+        $contact->last_name = strval($request->input('last_name'));
+        $contact->number = intval($request->input('number'));
         $contact->save();
 
-        return redirect('/')->with('status', 'Contact updated successfully!');
+        $notifications_type = $this->_get_notifications_type();
+        if($notifications_type === 'sweetalert2') {
+            Alert::success('Contact updated successfully!');
+            return redirect()->action('ContactsController@index');
+        }
+        return redirect()->action('ContactsController@index')->with('status', 'Contact updated successfully!');
     }
 
     /**
@@ -120,8 +122,8 @@ class ContactsController extends Controller
      * @param int $id
      */    
     public function confirmDestroy($id) {
-        $contact = Contact::findOrFail($id);
-        return view('contacts.confirmDestroy', ['contact' => $contact]);
+        $contact = Contact::findOrFail(intval($id));
+        return view('contacts.confirmDestroy', compact('contact'));
     }
 
     /**
@@ -130,10 +132,63 @@ class ContactsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $contact = Contact::findOrFail($id);
+    public function destroy($id) {
+        $contact = Contact::findOrFail(intval($id));
         $contact->delete();
-        return redirect('/')->with('status', 'Contact deleted successfully!');
+
+        $notifications_type = $this->_get_notifications_type();
+        if($notifications_type === 'sweetalert2') {
+            Alert::success('Contact deleted successfully!');
+            return redirect()->action('ContactsController@index');
+        }
+        return redirect()->action('ContactsController@index')->with('status', 'Contact deleted successfully!');
+    }
+
+    /**
+     * 
+     */
+    public function settings_show() {
+        $notifications_array = [
+            'standard' => 'Standard',
+            'sweetalert2' => 'Sweet Alert 2'
+        ];
+        $notifications_type = $this->_get_notifications_type();
+
+        return view('contacts.settings', compact(
+            'notifications_array', 
+            'notifications_type'
+        ));
+    }
+
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     */
+    public function settings_store(Request $request) {
+        $notifications_type = strval($request->input('notification'));
+        $notifications_type_array = [
+            'notifications_type' => $notifications_type
+        ];
+        $path = app_path() .'\Settings\settings.json';
+        file_put_contents($path, json_encode($notifications_type_array));
+
+        if($notifications_type === 'sweetalert2') {
+            Alert::success('Notifications type saved successfully!');
+            return redirect()->action('ContactsController@index');
+        }
+        return redirect()->action('ContactsController@index')->with('status', 'Notifications type saved successfully!');
+    }
+
+    /**
+     * 
+     */
+    private function _get_notifications_type() {
+        $path = app_path() .'\Settings\settings.json';
+        if(file_exists($path)) {
+            $notifications = json_decode(file_get_contents($path), true);
+            $notifications_type = strval($notifications['notifications_type']);
+            return $notifications_type;
+        }
+        return false;
     }
 }
