@@ -38,7 +38,7 @@ php artisan serve
 
 07. Visit http://localhost:8000
 
-## Backgrounds 
+## Screenshots 
 
 ```
 001
