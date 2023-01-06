@@ -68,9 +68,3 @@ php artisan serve
 
 `Deleted contact`
 ![Deleted contact](readme/deleted_contact.png)
-
-## Contact
-
-```
-danielgogovmail@gmail.com
-```
